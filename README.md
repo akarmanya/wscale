@@ -3,3 +3,7 @@
 ## _Motivation_
 
 ![](docs/assets/meme.jpeg)
+
+## _Architecture_
+
+![](docs/assets/wscale.gif)
