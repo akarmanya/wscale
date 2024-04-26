@@ -20,7 +20,7 @@ pairs are transmitted between the client and server.
 
 ### HTTP is a stateless protocol
 
-![](docs/assets/flows/http/http-stateless.gif)
+![](docs/assets/flows/http/http-stateless-trans.gif)
 
 However, this way of communication is _**stateless**_, since one client can request to multiple HTTP servers and the client state need not be stored in the server. Therefore, millions of clients can be served independently across multiple HTTP servers that are load balanced by reverse proxy servers. Therefore, **HTTP servers are horizontally scalable**.
 
