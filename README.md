@@ -32,7 +32,7 @@ However, note that a typical HTTP server cannot, on its own, initiate a communic
 
 However, in case of a [**WebSocket protocol**](https://datatracker.ietf.org/doc/html/rfc6455), **one client is bound to a single WebSocket server** and the WebSocket server knows the state of the client. The server can **broadcast** or **multicast** events that are initiated from the server itself. This can happen simply because the way of communication is **stateful** and the server knows the state of the client. This helps in _low latency_ real time communications between the client and the server. Now, **a loss of connection implies the loss of state**.
 
-Note that one client ideally binds to one WebSocket server and this server maintains the state of the client. However, just **simply scaling the WebSocket severs horizontally cannot replicate the states across the multiple WebSocket servers** and vertically scaling a WebSocket server is capped by hardware limitations.
+Note that one client ideally binds to one WebSocket server and this server maintains the state of the client. However, just **simply scaling the WebSocket servers horizontally cannot replicate the states across the multiple WebSocket servers** and vertically scaling a WebSocket server is capped by hardware limitations.
 
 ## _This #PR resolves #RP_
 
@@ -47,3 +47,11 @@ Note that one client ideally binds to one WebSocket server and this server maint
 ### Replicating the states across multiple WebSocket Severs
 
 ![](docs/assets/flows/wscale/wscale-stateful-trans.gif)
+
+### Deciding between _Apache Kafka_ and _Redis Pub-Sub_
+
+![](docs/assets//pub-sub/redis-vs-kafka-trans.png)
+
+### Adding a _Distributed Caching Layer_ to cut down _Network & DB calls_
+
+![](docs/assets/caching/distributed-caching-trans.png)
