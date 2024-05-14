@@ -23,7 +23,13 @@ export const useWebSocket = (url: string) => {
     if (ws.current) {
       ws.current.close();
     }
-    ws.current = new WebSocket(url) as WebSocketExt;
+    const token = import.meta.env.VITE_SECRET_TOKEN;
+
+    if (!token) {
+      console.error("SECRET_KEY is undefined. Check the .env");
+    }
+
+    ws.current = new WebSocket(`${url}?token=${token}`) as WebSocketExt;
 
     ws.current.addEventListener("error", () => {
       setMessage("WebSocket error");
@@ -42,8 +48,12 @@ export const useWebSocket = (url: string) => {
     ws.current.addEventListener("message", (msg) => {
       console.log(`Received message: ${msg.data}`);
       const MESSAGE_TYPE = JSON.parse(msg.data).type;
+
       if (MESSAGE_TYPE === "PING") {
         heartbeat();
+      } else if (MESSAGE_TYPE === "UNAUTHORIZED") {
+        handleRefresh();
+        setMessage(JSON.parse(msg.data).payload.message);
       } else if (MESSAGE_TYPE === "SEND_MESSAGE") {
         setAllMessages((prevMessages) => [
           ...prevMessages,
@@ -127,6 +137,7 @@ export const useWebSocket = (url: string) => {
     message,
     allMessages,
     textFieldValue,
+    setTextFieldValue,
     handleConnectionOpen,
     closeConnection,
     sendMessage,

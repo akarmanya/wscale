@@ -3,6 +3,7 @@ console.log("Scaling WebSockets...");
 
 import { WebSocketServer, WebSocket } from "ws";
 import express from "express";
+import url from "url";
 import {
   INCOMING_MESSAGE,
   OUTGOING_MESSAGE,
@@ -11,6 +12,7 @@ import {
 } from "./messages";
 
 import { HEARTBEAT_INTERVAL, HEARTBEAT_VALUE } from "./constants";
+import tokenIsValid from "./utils";
 
 function onSocketPreError(e: Error) {
   console.log(e);
@@ -52,6 +54,29 @@ httpServer.on("upgrade", (req, socket, head) => {
 });
 
 wss.on("connection", function connection(ws: WebSocket, req) {
+  // @ts-ignore
+  const token: string = url.parse(req.url, true).query.token || "";
+  // const userId = extractUserId(token);
+
+  const checkIfAuthorized = tokenIsValid(token);
+  // Perform auth
+  if (!token || !checkIfAuthorized) {
+    console.log("Unauthorized user received in WScale ws backend");
+    // Send an unauthorized message to the client
+    ws.send(
+      JSON.stringify({
+        type: "UNAUTHORIZED",
+        payload: {
+          message:
+            "You are not authorized to connect to the WScale WebSocketServer",
+        },
+      }),
+    );
+    // Close the WebSocket connection
+    ws.terminate();
+    return;
+  }
+  console.log("Client is authorized and authenticated in WScale ws backend");
   console.log(
     `HTTP protocol is upgraded to WS protocol and is communicating on PORT ${PORT}`,
   );

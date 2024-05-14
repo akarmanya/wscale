@@ -21,6 +21,7 @@ export const Chat = () => {
     message,
     allMessages,
     textFieldValue,
+    setTextFieldValue,
     handleConnectionOpen,
     closeConnection,
     sendMessage,
@@ -34,7 +35,7 @@ export const Chat = () => {
 
   const handleMessageSend = () => {
     const clientMessage = textFieldValue;
-
+    setTextFieldValue("");
     if (clientMessage.length === 0) {
       return;
     } else {
