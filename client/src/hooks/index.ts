@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, SetStateAction } from "react";
 
-const HEARTBEAT_TIMEOUT = 1000 * 5 + 1000 * 1; // interval + buffer time to get back from ws backend
-const HEARTBEAT_VALUE = 1;
+import { HEARTBEAT_TIMEOUT, HEARTBEAT_VALUE } from "../constants";
 export const useWebSocket = (url: string) => {
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
@@ -88,6 +87,7 @@ export const useWebSocket = (url: string) => {
 
   const sendMessage = (message: string) => {
     if (!ws.current || ws.current.readyState !== WebSocket.OPEN) {
+      handleRefresh();
       setMessage(
         "No WebSocket connection established from the client. Connect to WScale",
       );
@@ -111,6 +111,9 @@ export const useWebSocket = (url: string) => {
 
   const handleRefresh = () => {
     setAllMessages([]);
+    setMessage(
+      "No WebSocket connection established from the client. Connect to WScale",
+    );
   };
 
   const handleTextFieldChange = (event: {

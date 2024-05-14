@@ -10,8 +10,7 @@ import {
   SUPPORTED_MESSAGES,
 } from "./messages";
 
-const HEARTBEAT_INTERVAL = 1000 * 5; // 5 seconds
-const HEARTBEAT_VALUE = 1;
+import { HEARTBEAT_INTERVAL, HEARTBEAT_VALUE } from "./constants";
 
 function onSocketPreError(e: Error) {
   console.log(e);
