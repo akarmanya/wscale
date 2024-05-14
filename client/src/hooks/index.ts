@@ -1,14 +1,16 @@
-import { useState, useEffect, useRef, SetStateAction } from 'react';
+import { useState, useEffect, useRef, SetStateAction } from "react";
 
+const HEARTBEAT_TIMEOUT = 1000 * 5 + 1000 * 1; // interval + buffer time to get back from ws backend
+const HEARTBEAT_VALUE = 1;
 export const useWebSocket = (url: string) => {
   const [isConnected, setIsConnected] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>('');
+  const [message, setMessage] = useState<string>("");
   const [allMessages, setAllMessages] = useState<
-    { content: string; type: 'sent' | 'received' }[]
+    { content: string; type: "sent" | "received" }[]
   >([]);
-  const [textFieldValue, setTextFieldValue] = useState('');
+  const [textFieldValue, setTextFieldValue] = useState("");
 
-  const ws = useRef<WebSocket | null>(null);
+  const ws = useRef<WebSocketExt | null>(null);
 
   useEffect(() => {
     return () => {
@@ -22,31 +24,36 @@ export const useWebSocket = (url: string) => {
     if (ws.current) {
       ws.current.close();
     }
-    ws.current = new WebSocket(url);
+    ws.current = new WebSocket(url) as WebSocketExt;
 
-    ws.current.addEventListener('error', () => {
-      setMessage('WebSocket error');
+    ws.current.addEventListener("error", () => {
+      setMessage("WebSocket error");
     });
 
-    ws.current.addEventListener('open', () => {
-      setMessage('WebSocket connection established');
+    ws.current.addEventListener("open", () => {
+      setMessage("WebSocket connection established");
       setIsConnected(true);
     });
 
-    ws.current.addEventListener('close', () => {
-      setMessage('WebSocket connection closed');
+    ws.current.addEventListener("close", () => {
+      setMessage("WebSocket connection closed");
       setIsConnected(false);
     });
 
-    ws.current.addEventListener('message', (msg) => {
+    ws.current.addEventListener("message", (msg) => {
       console.log(`Received message: ${msg.data}`);
-      setAllMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          content: `Received ${JSON.parse(msg.data).message}`,
-          type: 'received',
-        },
-      ]);
+      const MESSAGE_TYPE = JSON.parse(msg.data).type;
+      if (MESSAGE_TYPE === "PING") {
+        heartbeat();
+      } else if (MESSAGE_TYPE === "SEND_MESSAGE") {
+        setAllMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            content: `Received ${JSON.parse(msg.data).payload.message}`,
+            type: "received",
+          },
+        ]);
+      }
     });
   };
 
@@ -56,26 +63,57 @@ export const useWebSocket = (url: string) => {
     }
   };
 
+  function heartbeat() {
+    if (ws.current === null) {
+      return;
+    } else if (ws.current.pingTimeout !== null) {
+      clearTimeout(ws.current.pingTimeout);
+    }
+
+    ws.current.pingTimeout = setTimeout(() => {
+      ws.current?.close();
+
+      // business logic for deciding whether or not to reconnect
+    }, HEARTBEAT_TIMEOUT);
+
+    ws.current.send(
+      JSON.stringify({
+        type: "PONG",
+        payload: {
+          HEARTBEAT_VALUE: HEARTBEAT_VALUE,
+        },
+      }),
+    );
+  }
+
   const sendMessage = (message: string) => {
     if (!ws.current || ws.current.readyState !== WebSocket.OPEN) {
-      setMessage('No WebSocket connection established from the client. Connect to WScale');
+      setMessage(
+        "No WebSocket connection established from the client. Connect to WScale",
+      );
       return;
     }
 
-    setMessage('');
+    setMessage("");
     setAllMessages((prevMessages) => [
       ...prevMessages,
-      { content: `Sent ${message}`, type: 'sent' },
+      { content: `Sent ${message}`, type: "sent" },
     ]);
-    ws.current.send(JSON.stringify({ message }));
+    ws.current.send(
+      JSON.stringify({
+        type: "SEND_MESSAGE",
+        payload: {
+          message: message,
+        },
+      }),
+    );
   };
 
   const handleRefresh = () => {
     setAllMessages([]);
   };
 
-
-const handleTextFieldChange = (event: {
+  const handleTextFieldChange = (event: {
     target: { value: SetStateAction<string> };
   }) => {
     setTextFieldValue(event.target.value);
