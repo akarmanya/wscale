@@ -24,10 +24,11 @@ services:
     build:
       context: ./ws
       dockerfile: Dockerfile
+    env_file:
+      - ./ws/.env
     environment:
       - PORT=8081
       - REDIS_URL=redis://redis:6379
-      - SECRET_KEY=${SECRET_KEY}
     depends_on:
       - redis
 
@@ -35,10 +36,11 @@ services:
     build:
       context: ./ws
       dockerfile: Dockerfile
+    env_file:
+      - ./ws/.env
     environment:
       - PORT=8082
       - REDIS_URL=redis://redis:6379
-      - SECRET_KEY=${SECRET_KEY}
     depends_on:
       - redis
 
