@@ -13,6 +13,8 @@ import {
 
 import { HEARTBEAT_INTERVAL, HEARTBEAT_VALUE } from "./constants";
 import tokenIsValid from "./utils";
+import { redisService } from './services/redis';
+import { WS_CHANNELS } from './types/ws';
 
 function onSocketPreError(e: Error) {
   console.log(e);
@@ -85,6 +87,9 @@ wss.on("connection", function connection(ws: WebSocket, req) {
 
   ws.on("error", onSocketPostError);
 
+  // Subscribe to the wsGlobal channel
+  redisService.subscribe(WS_CHANNELS.GLOBAL, ws);
+
   ws.on("message", function message(data: any) {
     try {
       const jsonData = JSON.parse(data.toString());
@@ -104,6 +109,7 @@ wss.on("connection", function connection(ws: WebSocket, req) {
   });
 
   ws.on("close", () => {
+    redisService.unsubscribe(ws);
     console.log("Connection closed from ws server");
   });
 });
@@ -146,10 +152,7 @@ function messageHandler(ws: WebSocket, message: INCOMING_MESSAGE) {
       },
     };
 
-    wss.clients.forEach(function each(client) {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify(outgoingPayload));
-      }
-    });
+    // Publish to Redis instead of direct WebSocket broadcast
+    redisService.publish(WS_CHANNELS.GLOBAL, outgoingPayload);
   }
 }

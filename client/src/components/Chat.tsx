@@ -27,7 +27,11 @@ export const Chat = () => {
     sendMessage,
     handleRefresh,
     handleTextFieldChange,
-  } = useWebSocket("ws://localhost:8080");
+  } = useWebSocket("ws://localhost");
+  /* 
+    Client connects to HAProxy on ws://localhost PORT 80
+    HAProxy routes the connection to either ws1 or ws2 using round-robin
+  */
 
   const handleConnectionClose = () => {
     closeConnection();
@@ -51,7 +55,12 @@ export const Chat = () => {
     <>
       <CssBaseline />
       <Container>
-        <Box display="flex" justifyContent="center" mt={2} mb={2}>
+        <Box
+          display="flex"
+          justifyContent="center"
+          mt={2}
+          mb={2}
+        >
           <ButtonGroup
             disableElevation
             variant="contained"
@@ -79,7 +88,12 @@ export const Chat = () => {
           </ButtonGroup>
         </Box>
 
-        <Box display="flex" justifyContent="center" mt={2} mb={2}>
+        <Box
+          display="flex"
+          justifyContent="center"
+          mt={2}
+          mb={2}
+        >
           <TextField
             id="outlined-textarea"
             label="Send something to the WScale Server"
@@ -91,7 +105,10 @@ export const Chat = () => {
           />
         </Box>
 
-        <Box display="flex" justifyContent="center">
+        <Box
+          display="flex"
+          justifyContent="center"
+        >
           <Button
             variant="outlined"
             endIcon={<SendIcon />}
@@ -120,7 +137,10 @@ export const Chat = () => {
               padding: "1rem",
             }}
           >
-            <Typography variant="body1" style={{ fontFamily: "Roboto" }}>
+            <Typography
+              variant="body1"
+              style={{ fontFamily: "Roboto" }}
+            >
               {allMessages.length == 0 ? message : ""}
               {allMessages.map((msg, index) => (
                 <div key={index}>
@@ -135,7 +155,10 @@ export const Chat = () => {
           </Paper>
         </Box>
 
-        <Box display="flex" justifyContent="center">
+        <Box
+          display="flex"
+          justifyContent="center"
+        >
           <Button
             variant="outlined"
             color="error"

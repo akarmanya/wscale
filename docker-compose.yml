@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  haproxy:
+    build:
+      context: ./haproxy
+    ports:
+      - "80:80"
+      - "8404:8404"
+    depends_on:
+      - ws1
+      - ws2
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  ws1:
+    build:
+      context: ./ws
+      dockerfile: Dockerfile
+    env_file:
+      - ./ws/.env
+    environment:
+      - PORT=8081
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+
+  ws2:
+    build:
+      context: ./ws
+      dockerfile: Dockerfile
+    env_file:
+      - ./ws/.env
+    environment:
+      - PORT=8082
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+
+volumes:
+  redis_data:
