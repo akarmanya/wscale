@@ -12,7 +12,7 @@ import SensorsIcon from "@mui/icons-material/Sensors";
 import SensorsOffIcon from "@mui/icons-material/SensorsOff";
 import { useEffect } from "react";
 import { useWebSocket } from "../hooks";
-
+import { handleEnterKeyPress } from "../utils";
 // let ws: WebSocket;
 
 export const Chat = () => {
@@ -185,6 +185,7 @@ export const Chat = () => {
             maxRows={4}
             value={textFieldValue}
             onChange={handleTextFieldChange}
+            onKeyDown={(e) => handleEnterKeyPress(e, handleMessageSend)}
             sx={{
               width: "100%",
               maxWidth: "60%",
