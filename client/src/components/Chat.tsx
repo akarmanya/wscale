@@ -123,7 +123,7 @@ export const Chat = () => {
               {allMessages.length == 0 ? (
                 <Typography
                   variant="body1"
-                  style={{ fontFamily: "Roboto" }}
+                  style={{ fontFamily: "Courier Prime" }}
                 >
                   {message}
                 </Typography>
@@ -153,7 +153,7 @@ export const Chat = () => {
                       <Typography
                         variant="body1"
                         style={{
-                          fontFamily: "Roboto",
+                          fontFamily: "Courier Prime",
                           color: "#000000",
                           wordBreak: "break-word",
                         }}
@@ -192,6 +192,7 @@ export const Chat = () => {
               "& .MuiOutlinedInput-root": {
                 borderRadius: "5px",
                 backgroundColor: "#fff",
+                fontFamily: "Courier Prime",
               },
             }}
           />
