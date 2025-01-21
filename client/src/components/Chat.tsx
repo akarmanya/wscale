@@ -54,7 +54,9 @@ export const Chat = () => {
   return (
     <>
       <CssBaseline />
-      <Container>
+      <Container
+        sx={{ height: "100vh", display: "flex", flexDirection: "column" }}
+      >
         <Box
           display="flex"
           justifyContent="center"
@@ -89,56 +91,23 @@ export const Chat = () => {
         </Box>
 
         <Box
-          display="flex"
-          justifyContent="center"
-          mt={2}
-          mb={2}
-        >
-          <TextField
-            id="outlined-textarea"
-            label="Send something to the WScale Server"
-            placeholder="Say Hi to the WScale Server"
-            multiline
-            value={textFieldValue}
-            onChange={handleTextFieldChange}
-            sx={{ width: "100%", maxWidth: "400px" }}
-          />
-        </Box>
-
-        <Box
-          display="flex"
-          justifyContent="center"
-        >
-          <Button
-            variant="outlined"
-            endIcon={<SendIcon />}
-            onClick={handleMessageSend}
-          >
-            Send
-          </Button>
-        </Box>
-
-        <Box
           sx={{
             display: "flex",
             justifyContent: "center",
-            flexWrap: "wrap",
-            height: "60vh",
-            "& > :not(style)": {
-              m: 2,
-              width: "100%",
-              maxWidth: "80%",
-              height: "100%",
-            },
-            marginBottom: "2rem",
+            flexGrow: 1,
+            minHeight: 0,
+            mb: 2,
           }}
         >
           <Paper
             elevation={3}
             sx={{
-              padding: "1rem",
+              width: "100%",
+              maxWidth: "80%",
               height: "100%",
-              overflowY: "auto",
+              display: "flex",
+              flexDirection: "column",
+              overflow: "hidden",
             }}
           >
             <Box
@@ -146,6 +115,9 @@ export const Chat = () => {
                 display: "flex",
                 flexDirection: "column",
                 gap: "0.5rem",
+                padding: "1rem",
+                overflowY: "auto",
+                flexGrow: 1,
               }}
             >
               {allMessages.length == 0 ? (
@@ -197,8 +169,48 @@ export const Chat = () => {
         </Box>
 
         <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            gap: 2,
+            mb: 3,
+            mt: "auto",
+          }}
+        >
+          <TextField
+            id="outlined-textarea"
+            label="Send something to the WScale Server"
+            placeholder="Say Hi to the WScale Server"
+            multiline
+            maxRows={4}
+            value={textFieldValue}
+            onChange={handleTextFieldChange}
+            sx={{
+              width: "100%",
+              maxWidth: "60%",
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "5px",
+                backgroundColor: "#fff",
+              },
+            }}
+          />
+          <Button
+            variant="contained"
+            endIcon={<SendIcon />}
+            onClick={handleMessageSend}
+            sx={{
+              borderRadius: "5px",
+              px: 3,
+            }}
+          >
+            Send
+          </Button>
+        </Box>
+
+        <Box
           display="flex"
           justifyContent="center"
+          mb={2}
         >
           <Button
             variant="outlined"
