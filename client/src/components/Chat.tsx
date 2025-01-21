@@ -123,35 +123,76 @@ export const Chat = () => {
             display: "flex",
             justifyContent: "center",
             flexWrap: "wrap",
+            height: "60vh",
             "& > :not(style)": {
               m: 2,
               width: "100%",
-              maxWidth: "400px",
+              maxWidth: "80%",
               height: "100%",
             },
+            marginBottom: "2rem",
           }}
         >
           <Paper
             elevation={3}
             sx={{
               padding: "1rem",
+              height: "100%",
+              overflowY: "auto",
             }}
           >
-            <Typography
-              variant="body1"
-              style={{ fontFamily: "Roboto" }}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.5rem",
+              }}
             >
-              {allMessages.length == 0 ? message : ""}
-              {allMessages.map((msg, index) => (
-                <div key={index}>
-                  {msg.type === "sent" ? (
-                    <p style={{ color: "blue" }}>{msg.content}</p>
-                  ) : (
-                    <p style={{ color: "green" }}>{msg.content}</p>
-                  )}
-                </div>
-              ))}
-            </Typography>
+              {allMessages.length == 0 ? (
+                <Typography
+                  variant="body1"
+                  style={{ fontFamily: "Roboto" }}
+                >
+                  {message}
+                </Typography>
+              ) : (
+                allMessages.map((msg, index) => (
+                  <Box
+                    key={index}
+                    sx={{
+                      display: "flex",
+                      justifyContent:
+                        msg.type === "sent" ? "flex-end" : "flex-start",
+                      width: "100%",
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        maxWidth: "70%",
+                        backgroundColor:
+                          msg.type === "sent" ? "#dcf8c6" : "#fff",
+                        padding: "0.5rem 1rem",
+                        borderRadius: "1rem",
+                        boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
+                        border:
+                          msg.type === "sent" ? "none" : "1px solid #e0e0e0",
+                      }}
+                    >
+                      <Typography
+                        variant="body1"
+                        style={{
+                          fontFamily: "Roboto",
+                          color: "#000000",
+                          wordBreak: "break-word",
+                        }}
+                      >
+                        {msg.content.replace(/^(Sent |Received )/, "")}
+                      </Typography>
+                    </Box>
+                  </Box>
+                ))
+              )}
+            </Box>
           </Paper>
         </Box>
 
