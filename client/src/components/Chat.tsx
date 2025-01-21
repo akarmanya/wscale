@@ -10,7 +10,7 @@ import SendIcon from "@mui/icons-material/Send";
 import CachedIcon from "@mui/icons-material/Cached";
 import SensorsIcon from "@mui/icons-material/Sensors";
 import SensorsOffIcon from "@mui/icons-material/SensorsOff";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useWebSocket } from "../hooks";
 import { handleEnterKeyPress } from "../utils";
 // let ws: WebSocket;
@@ -50,6 +50,32 @@ export const Chat = () => {
   useEffect(() => {
     console.log(textFieldValue);
   }, [textFieldValue]);
+
+  const scrollBoxRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = () => {
+    const element = scrollBoxRef.current;
+    if (!element) return;
+
+    const parent = element.parentElement;
+    if (!parent) return;
+
+    const isScrolledToTop = element.scrollTop > 20;
+    const isScrolledToBottom =
+      element.scrollHeight - element.scrollTop <= element.clientHeight + 20;
+
+    if (isScrolledToTop) {
+      parent.classList.add("scrolled-top");
+    } else {
+      parent.classList.remove("scrolled-top");
+    }
+
+    if (isScrolledToBottom) {
+      parent.classList.remove("scrolled-bottom");
+    } else {
+      parent.classList.add("scrolled-bottom");
+    }
+  };
 
   return (
     <>
@@ -108,9 +134,44 @@ export const Chat = () => {
               display: "flex",
               flexDirection: "column",
               overflow: "hidden",
+              position: "relative",
+              "&::before": {
+                content: '""',
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                height: "20px",
+                background:
+                  "linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0))",
+                zIndex: 1,
+                opacity: 0,
+                transition: "opacity 0.3s",
+              },
+              "&::after": {
+                content: '""',
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: "20px",
+                background:
+                  "linear-gradient(to top, rgba(255,255,255,0.9), rgba(255,255,255,0))",
+                zIndex: 1,
+                opacity: 0,
+                transition: "opacity 0.3s",
+              },
+              "&.scrolled-top::before": {
+                opacity: 1,
+              },
+              "&.scrolled-bottom::after": {
+                opacity: 1,
+              },
             }}
           >
             <Box
+              ref={scrollBoxRef}
+              onScroll={handleScroll}
               sx={{
                 display: "flex",
                 flexDirection: "column",
@@ -118,6 +179,20 @@ export const Chat = () => {
                 padding: "1rem",
                 overflowY: "auto",
                 flexGrow: 1,
+                "&::-webkit-scrollbar": {
+                  width: "8px",
+                },
+                "&::-webkit-scrollbar-track": {
+                  background: "#f1f1f1",
+                  borderRadius: "4px",
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  background: "#888",
+                  borderRadius: "4px",
+                  "&:hover": {
+                    background: "#555",
+                  },
+                },
               }}
             >
               {allMessages.length == 0 ? (
